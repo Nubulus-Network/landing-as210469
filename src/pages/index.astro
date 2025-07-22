@@ -1,0 +1,253 @@
+---
+// Leer información desde archivos markdown
+import { getEntry } from 'astro:content';
+
+const networkInfo = await getEntry('network', 'as210469');
+const contactsInfo = await getEntry('contacts', 'main');
+const policiesInfo = await getEntry('policies', 'peering');
+
+// Combinar toda la información
+const asInfo = {
+  ...networkInfo.data,
+  contacts: contactsInfo.data,
+  policies: {
+    general: policiesInfo.data.general,
+    locations: policiesInfo.data.locations,
+    contracts: policiesInfo.data.contracts,
+  },
+  capabilities: {
+    unicast: policiesInfo.data.unicast,
+    multicast: policiesInfo.data.multicast,
+    ipv6: policiesInfo.data.ipv6,
+    routeServers: policiesInfo.data.routeServers,
+  }
+};
+---
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AS210469 - Nubulus Network</title>
+    <style>
+      :root {
+        --bg-color: #ffffff;
+        --text-color: #222222;
+        --border-color: #eeeeee;
+        --th-bg: #f5f5f5;
+        --section-color: #444444;
+        --link-color: #0077cc;
+        --header-bg: #f8f9fa;
+        --button-bg: #e9ecef;
+        --button-hover: #dee2e6;
+      }
+      
+      [data-theme="dark"] {
+        --bg-color: #1a1a1a;
+        --text-color: #e0e0e0;
+        --border-color: #333333;
+        --th-bg: #2d2d2d;
+        --section-color: #cccccc;
+        --link-color: #4a9eff;
+        --header-bg: #2d2d2d;
+        --button-bg: #333333;
+        --button-hover: #404040;
+      }
+      
+      * { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+      
+      body { 
+        font-family: sans-serif; 
+        background: var(--bg-color); 
+        color: var(--text-color); 
+        margin: 0; 
+        padding: 0; 
+      }
+      
+      header {
+        background: var(--header-bg);
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      
+      .header-content {
+        max-width: 700px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 2rem;
+      }
+      
+      .logo { font-weight: bold; font-size: 1.1rem; }
+      
+      .header-controls {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+      
+      .nav-menu {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+      
+      .nav-link {
+        color: var(--text-color);
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        border: 1px solid var(--border-color);
+        background: var(--button-bg);
+        font-size: 0.9rem;
+      }
+      
+      .nav-link:hover {
+        background: var(--button-hover);
+        text-decoration: none;
+      }
+      
+      .theme-toggle {
+        background: var(--button-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        padding: 0.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1.2rem;
+      }
+      
+      .theme-toggle:hover {
+        background: var(--button-hover);
+      }
+      
+      main { max-width: 700px; margin: 2rem auto; padding: 2rem; }
+      h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+      table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; }
+      th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid var(--border-color); }
+      th { background: var(--th-bg); }
+      section { margin-bottom: 2rem; }
+      .section-title { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--section-color); }
+      a { color: var(--link-color); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      
+      @media (max-width: 600px) {
+        .header-content { flex-direction: column; gap: 1rem; }
+        .nav-menu { flex-wrap: wrap; }
+        main { padding: 1rem; }
+      }
+    </style>
+    
+    <script>
+      // Tema oscuro/claro - JavaScript mínimo
+      document.addEventListener('DOMContentLoaded', function() {
+        const themeToggle = document.querySelector('.theme-toggle') as HTMLButtonElement;
+        const html = document.documentElement;
+        
+        if (!themeToggle) return;
+        
+        // Cargar tema guardado o usar preferencia del sistema
+        const savedTheme = localStorage.getItem('theme');
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        const currentTheme = savedTheme || systemTheme;
+        
+        html.setAttribute('data-theme', currentTheme);
+        updateThemeIcon(currentTheme);
+        
+        themeToggle.addEventListener('click', function() {
+          const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+          html.setAttribute('data-theme', newTheme);
+          localStorage.setItem('theme', newTheme);
+          updateThemeIcon(newTheme);
+        });
+        
+        function updateThemeIcon(theme: string) {
+          if (themeToggle) {
+            themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+          }
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <header>
+      <div class="header-content">
+        <div class="logo">AS210469 - Nubulus Network</div>
+        <div class="header-controls">
+          <nav class="nav-menu">
+            <a href="https://lg.as210469.net" class="nav-link" target="_blank" rel="noopener">Looking Glass</a>
+            <a href="https://www.peeringdb.com/asn/210469" class="nav-link" target="_blank" rel="noopener">PeeringDB</a>
+            <a href="https://bgp.tools/as/210469" class="nav-link" target="_blank" rel="noopener">BGP.tools</a>
+          </nav>
+          <button class="theme-toggle" aria-label="Toggle theme">🌙</button>
+        </div>
+      </div>
+    </header>
+    <main>
+      <h1>AS210469 - Nubulus Network</h1>
+      <p>AS210469 es usado para Nubulus Network. {asInfo.description}</p>
+      <section>
+        <div class="section-title">La Red</div>
+        <table>
+          <tbody>
+            <tr><th>Network Name</th><td>{asInfo.networkName}</td></tr>
+            <tr><th>Organisation Name</th><td>{asInfo.organisationName}</td></tr>
+            <tr><th>Website</th><td><a href={asInfo.website}>{asInfo.website}</a></td></tr>
+            <tr><th>ASN</th><td>{asInfo.asn}</td></tr>
+            <tr><th>AS-Set</th><td>{asInfo.asSet}</td></tr>
+            <tr><th>IPv4 Prefixes</th><td>{asInfo.ipv4Prefixes}</td></tr>
+            <tr><th>IPv6 Prefixes</th><td>{asInfo.ipv6Prefixes}</td></tr>
+            <tr><th>Traffic</th><td>{asInfo.traffic}</td></tr>
+            <tr><th>Traffic Ratio</th><td>{asInfo.trafficRatio}</td></tr>
+            <tr><th>Scope</th><td>{asInfo.scope}</td></tr>
+          </tbody>
+        </table>
+      </section>
+      <section>
+        <div class="section-title">Contactos</div>
+        <table>
+          <tbody>
+            <tr><th>Peering Requests</th><td><a href={`mailto:${asInfo.contacts.peering}`}>{asInfo.contacts.peering}</a></td></tr>
+            <tr><th>General Contact</th><td><a href={`mailto:${asInfo.contacts.general}`}>{asInfo.contacts.general}</a></td></tr>
+            <tr><th>Abuse Reports</th><td><a href={`mailto:${asInfo.contacts.abuse}`}>{asInfo.contacts.abuse}</a></td></tr>
+            <tr><th>Telegram</th><td>{asInfo.contacts.telegram}</td></tr>
+          </tbody>
+        </table>
+      </section>
+      <section>
+        <div class="section-title">Conectividad</div>
+        <p><strong>Internet Exchanges:</strong> {asInfo.ixCount} registrados en PeeringDB</p>
+        <p><strong>Facilities:</strong> {asInfo.facCount} registradas en PeeringDB</p>
+        
+        <div class="section-title">Políticas de Peering</div>
+        <table>
+          <tbody>
+            <tr><th>General Policy</th><td>{asInfo.policies.general}</td></tr>
+            <tr><th>Locations Required</th><td>{asInfo.policies.locations}</td></tr>
+            <tr><th>Contracts Required</th><td>{asInfo.policies.contracts}</td></tr>
+          </tbody>
+        </table>
+        
+        <div class="section-title">Capacidades Técnicas</div>
+        <table>
+          <tbody>
+            <tr><th>Unicast</th><td>{asInfo.capabilities.unicast ? "Sí" : "No"}</td></tr>
+            <tr><th>Multicast</th><td>{asInfo.capabilities.multicast ? "Sí" : "No"}</td></tr>
+            <tr><th>IPv6</th><td>{asInfo.capabilities.ipv6 ? "Sí" : "No"}</td></tr>
+            <tr><th>Route Servers</th><td>{asInfo.capabilities.routeServers ? "Sí" : "No"}</td></tr>
+          </tbody>
+        </table>
+        
+        <div class="section-title">Tipos de Servicio</div>
+        <table>
+          <tbody>
+            <tr><th>Info Types</th><td>{asInfo.infoTypes.join(", ")}</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </body>
+</html>
